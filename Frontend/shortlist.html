@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shortlisted Products — FitFinder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <div class="brand-icon">F</div>
+            <span class="brand-name">FitFinder</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">New Query</a>
+            <div id="auth-nav-container" style="display: flex; align-items: center; gap: 1rem;">
+                <a href="login.html" class="nav-link">Login</a>
+                <a href="register.html" class="btn btn-primary" style="padding: 0.45rem 1rem; font-size: 0.85rem;">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem;">
+            <div>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <span id="shortlist-category-tag" class="chip-btn active" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; cursor: default;"></span>
+                    <span id="shortlist-budget-tag" class="chip-btn" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; cursor: default;"></span>
+                </div>
+                <h1 style="font-family: var(--font-heading); font-size: 2.25rem; font-weight: 800;">
+                    Shortlisted Candidates
+                </h1>
+                <p id="shortlist-query-display" style="color: var(--text-muted); font-size: 1rem; margin-top: 0.25rem; font-style: italic;"></p>
+            </div>
+
+            <button type="button" id="btn-proceed-compare" onclick="proceedToComparePage()" class="btn btn-emerald" style="padding: 0.85rem 1.75rem;">
+                ⚖️ Compare Selected Products with CompareWise
+            </button>
+        </div>
+
+        <!-- Product Cards Grid -->
+        <div id="products-grid-container" class="product-grid">
+            <!-- Dynamically populated product cards -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        FitFinder &copy; 2026 — ChoiceAI & CompareWise Recommendation Engine
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

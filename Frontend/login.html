@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — FitFinder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <div class="brand-icon">F</div>
+            <span class="brand-name">FitFinder</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="register.html" class="btn btn-primary" style="padding: 0.45rem 1rem; font-size: 0.85rem;">Sign Up</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="auth-box">
+            <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; text-align: center;">
+                Welcome Back
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin-bottom: 1.75rem;">
+                Sign in to view your saved queries and CompareWise recommendations.
+            </p>
+
+            <form onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">Email Address</label>
+                    <input type="email" id="login-email" class="form-input" placeholder="e.g. rahul.mehta@example.com" value="rahul.mehta@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-input" placeholder="Enter your password" value="rahul123" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.85rem;">
+                    Sign In
+                </button>
+            </form>
+
+            <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 1.5rem;">
+                Don't have an account? <a href="register.html" style="color: var(--accent-primary); text-decoration: none; font-weight: 600;">Register here</a>
+            </p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        FitFinder &copy; 2026 — ChoiceAI & CompareWise Recommendation Engine
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

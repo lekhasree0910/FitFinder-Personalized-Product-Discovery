@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompareWise Results & Recommendation — FitFinder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <div class="brand-icon">F</div>
+            <span class="brand-name">FitFinder</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">New Query</a>
+            <a href="shortlist.html" class="nav-link">Shortlist</a>
+            <div id="auth-nav-container" style="display: flex; align-items: center; gap: 1rem;">
+                <a href="login.html" class="nav-link">Login</a>
+                <a href="register.html" class="btn btn-primary" style="padding: 0.45rem 1rem; font-size: 0.85rem;">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- CompareWise Top Recommendation Banner -->
+        <div id="recommendation-banner-container">
+            <!-- Dynamically populated top recommendation card -->
+        </div>
+
+        <!-- Section Title for Side-by-Side Comparison -->
+        <div style="margin-bottom: 1.25rem;">
+            <h2 style="font-family: var(--font-heading); font-size: 1.75rem; font-weight: 700;">
+                📊 Side-by-Side Aspect Score Breakdown
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                Every aspect score below combines factory hardware specs with aggregated ABSA sentiment extracted from real user reviews.
+            </p>
+        </div>
+
+        <!-- Comparison Table Container -->
+        <div id="compare-table-container">
+            <!-- Dynamically rendered table -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        FitFinder &copy; 2026 — ChoiceAI & CompareWise Recommendation Engine
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query History — FitFinder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <div class="brand-icon">F</div>
+            <span class="brand-name">FitFinder</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Discover</a>
+            <div id="auth-nav-container" style="display: flex; align-items: center; gap: 1rem;">
+                <a href="login.html" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-family: var(--font-heading); font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem;">
+                Your Search & Comparison History
+            </h1>
+            <p style="color: var(--text-muted); font-size: 1rem;">
+                Easily revisit past queries, review extracted preferences, or reopen full CompareWise comparisons.
+            </p>
+        </div>
+
+        <div id="history-container">
+            <!-- Dynamically rendered history list -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        FitFinder &copy; 2026 — ChoiceAI & CompareWise Recommendation Engine
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitFinder — Personalized Product Discovery & Recommendation using NLP</title>
+    <meta name="description" content="AI-driven product discovery engine that understands natural language queries, analyzes review sentiment per aspect, and delivers personalized recommendations.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <div class="brand-icon">F</div>
+            <span class="brand-name">FitFinder</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link active">Discover</a>
+            <div id="auth-nav-container" style="display: flex; align-items: center; gap: 1rem;">
+                <a href="login.html" class="nav-link">Login</a>
+                <a href="register.html" class="btn btn-primary" style="padding: 0.45rem 1rem; font-size: 0.85rem;">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-badge">⚡ Powered by ChoiceAI & CompareWise NLP</div>
+            <h1 class="hero-title">Find the <span>Perfect Product</span> Built for Your Priorities</h1>
+            <p class="hero-subtitle">
+                No rigid checkboxes. Tell us what you need in plain English — ChoiceAI extracts your feature priorities, while CompareWise analyzes real user reviews to rank products transparently.
+            </p>
+        </section>
+
+        <!-- ChoiceAI Query Input Area -->
+        <section class="query-box-container">
+            <!-- Category Chips -->
+            <div class="category-chips">
+                <button type="button" class="chip-btn active" data-category="Smartphone">📱 Smartphones</button>
+                <button type="button" class="chip-btn" data-category="Laptop">💻 Laptops</button>
+                <button type="button" class="chip-btn" data-category="Headphones">🎧 Headphones</button>
+                <button type="button" class="chip-btn" data-category="Smartwatch">⌚ Smartwatches</button>
+                <button type="button" class="chip-btn" data-category="Camera">📷 Cameras</button>
+            </div>
+
+            <!-- Input Box -->
+            <div class="query-input-wrapper">
+                <textarea id="query-input" class="query-textarea" placeholder="Describe what you need (e.g., 'I need a phone under 30k with excellent camera, battery and gaming.')"></textarea>
+            </div>
+
+            <!-- Action & Sample Pill Row -->
+            <div class="query-action-row">
+                <div class="sample-queries">
+                    <span class="sample-label">Try asking:</span>
+                    <button type="button" class="sample-pill" data-cat="Smartphone">"I need a phone under 30k with excellent camera, battery and gaming."</button>
+                    <button type="button" class="sample-pill" data-cat="Laptop">"Gaming laptop with fast GPU and top notch cooling under 1 lakh"</button>
+                    <button type="button" class="sample-pill" data-cat="Headphones">"Best wireless headphones for bass and active noise cancellation"</button>
+                </div>
+                <button type="button" id="btn-submit-query" onclick="submitChoiceAIQuery(event)" class="btn btn-primary" style="padding: 0.85rem 1.75rem;">
+                    ✨ Find My Match with ChoiceAI
+                </button>
+            </div>
+        </section>
+
+        <!-- Live Instant Results Section (Permanent & Stable Inline Display) -->
+        <section id="results-section" style="display: none; margin-top: 3rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span id="results-category-tag" class="chip-btn active" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; cursor: default;"></span>
+                        <span id="results-budget-tag" class="chip-btn" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; cursor: default;"></span>
+                    </div>
+                    <h2 style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800;">
+                        Matching Recommendations
+                    </h2>
+                    <p id="results-query-display" style="color: var(--text-muted); font-size: 0.95rem; font-style: italic; margin-top: 0.25rem;"></p>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button type="button" onclick="openPreferenceConfirmationModal()" class="btn btn-secondary" style="padding: 0.65rem 1.25rem; font-size: 0.9rem;">
+                        ⚙️ Fine-Tune Weights
+                    </button>
+                    <button type="button" id="btn-results-compare" onclick="proceedToCompareFromHome()" class="btn btn-emerald" style="padding: 0.65rem 1.25rem; font-size: 0.9rem;">
+                        ⚖️ Compare with CompareWise (<span id="results-selected-count">0</span>)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Extracted Weights Breakdown Bar -->
+            <div id="results-weights-bar" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1.75rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase;">Extracted Priorities:</span>
+                <div id="results-weights-tags" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+            </div>
+
+            <!-- Product Cards Grid -->
+            <div id="results-product-grid" class="product-grid">
+                <!-- Dynamically populated product cards -->
+            </div>
+        </section>
+
+        <!-- Feature Highlights -->
+        <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3.5rem;">
+            <div class="glass-card">
+                <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">🧠</div>
+                <h3 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 0.4rem;">ChoiceAI Extraction</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+                    Automatically parses natural language queries into category, price constraints, and fine-grained per-aspect importance weights.
+                </p>
+            </div>
+            <div class="glass-card">
+                <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">🔍</div>
+                <h3 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 0.4rem;">Aspect Sentiment (ABSA)</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+                    Separates camera from battery in reviews. Mines real sentiment for every aspect instead of relying on a compressed star rating.
+                </p>
+            </div>
+            <div class="glass-card">
+                <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">⚖️</div>
+                <h3 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 0.4rem;">CompareWise Scoring</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+                    Blends verified specifications with review-derived sentiment to compute a personalized match percentage with grounded explanations.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: ChoiceAI Extracted Preferences Confirmation -->
+    <div id="pref-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase;">ChoiceAI Analysis Complete</div>
+                    <h2 class="modal-title">Confirm Your Feature Priorities</h2>
+                </div>
+                <button class="modal-close" onclick="closePreferenceModal()">&times;</button>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+                <div style="font-size: 0.85rem; color: var(--text-muted);">Query: <span id="modal-query-text" style="color: #fff; font-weight: 600;"></span></div>
+                <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem; font-size: 0.85rem;">
+                    <div>Category: <span id="modal-category" style="color: var(--accent-primary); font-weight: 700;"></span></div>
+                    <div>Budget: <span id="modal-budget" style="color: #34d399; font-weight: 700;"></span></div>
+                </div>
+            </div>
+
+            <p style="font-size: 0.9rem; color: var(--text-muted);">
+                ChoiceAI calculated the following importance weights based on your query. You can fine-tune any slider before shortlisting:
+            </p>
+
+            <div id="modal-weights-container" class="weight-sliders-container">
+                <!-- Dynamically populated sliders -->
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                <button type="button" onclick="closePreferenceModal()" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="btn-modal-confirm" onclick="normalizeAndConfirmWeights()" class="btn btn-emerald">
+                    ✓ Confirm & View Shortlisted Products
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        FitFinder &copy; 2026 — Advanced NLP Personalized Recommendation System (ChoiceAI & CompareWise)
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

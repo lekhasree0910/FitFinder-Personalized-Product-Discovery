@@ -1,0 +1,18 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+venv/
+env/
+.env
+
+# Editor settings
+.vscode/
+.idea/
+
+# Excluded documents and test scripts
+FitFinder_SRS.docx
+test_fitfinder.py
+test_live_server.py
