@@ -10,18 +10,23 @@ except Exception:
     nltk.download('vader_lexicon', quiet=True)
     sia = SentimentIntensityAnalyzer()
 
-# Domain-specific sentiment lexicons for hardware/tech reviews
+# Domain-specific sentiment lexicons for hardware, appliances, and online retail reviews
 POSITIVE_TECH_WORDS = [
     "fantastic", "excellent", "superb", "crisp", "sharp", "stunning", "amazing",
     "snappy", "fluid", "premium", "durable", "solid", "punchy", "clear", "bright",
-    "top-notch", "beast", "great", "good", "fast", "smooth", "impressive", "long-lasting"
+    "top-notch", "beast", "great", "good", "fast", "smooth", "impressive", "long-lasting",
+    "chills fast", "ice cold", "chilling", "whisper quiet", "silent", "power saver",
+    "low power", "stains vanish", "cleans well", "cushioned", "comfortable", "comfy",
+    "sturdy", "energy efficient", "5 star", "crystal clear", "easy to clean"
 ]
 
 NEGATIVE_TECH_WORDS = [
     "drains quickly", "drain", "drains", "poor", "terrible", "laggy", "lags", "slow",
     "heating", "overheats", "heats up", "mediocre", "blurry", "muddy", "distortion",
     "uncomfortable", "plastic", "cheap", "fails", "glitchy", "bad", "worst", "horrible",
-    "heavy", "scratch", "subpar", "disappointing"
+    "heavy", "scratch", "subpar", "disappointing", "noisy", "rattling", "vibrates",
+    "loud", "weak cooling", "slow cooling", "stains remain", "high electricity bill",
+    "power hungry", "tangles clothes", "rough sole", "painful"
 ]
 
 

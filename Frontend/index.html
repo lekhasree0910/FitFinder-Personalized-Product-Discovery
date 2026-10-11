@@ -39,25 +39,35 @@
         <section class="query-box-container">
             <!-- Category Chips -->
             <div class="category-chips">
-                <button type="button" class="chip-btn active" data-category="Smartphone">📱 Smartphones</button>
+                <button type="button" class="chip-btn active" data-category="All">✨ All Products (Auto-Detect)</button>
+                <button type="button" class="chip-btn" data-category="Air Conditioner">❄️ Air Conditioners</button>
+                <button type="button" class="chip-btn" data-category="Washing Machine">🧺 Washing Machines</button>
+                <button type="button" class="chip-btn" data-category="Television">📺 Smart TVs</button>
+                <button type="button" class="chip-btn" data-category="Refrigerator">🧊 Refrigerators</button>
+                <button type="button" class="chip-btn" data-category="Smartphone">📱 Smartphones</button>
                 <button type="button" class="chip-btn" data-category="Laptop">💻 Laptops</button>
                 <button type="button" class="chip-btn" data-category="Headphones">🎧 Headphones</button>
+                <button type="button" class="chip-btn" data-category="Footwear">👟 Footwear & Shoes</button>
+                <button type="button" class="chip-btn" data-category="Kitchen Appliance">🍳 Kitchen Appliances</button>
+                <button type="button" class="chip-btn" data-category="Furniture">🪑 Furniture</button>
                 <button type="button" class="chip-btn" data-category="Smartwatch">⌚ Smartwatches</button>
                 <button type="button" class="chip-btn" data-category="Camera">📷 Cameras</button>
             </div>
 
             <!-- Input Box -->
             <div class="query-input-wrapper">
-                <textarea id="query-input" class="query-textarea" placeholder="Describe what you need (e.g., 'I need a phone under 30k with excellent camera, battery and gaming.')"></textarea>
+                <textarea id="query-input" class="query-textarea" placeholder="Describe ANY product you want (e.g. 'I want an AC in 30k with fast cooling', 'Washing machine in 30k with great wash quality', 'Running shoes under 5k')"></textarea>
             </div>
 
             <!-- Action & Sample Pill Row -->
             <div class="query-action-row">
                 <div class="sample-queries">
                     <span class="sample-label">Try asking:</span>
+                    <button type="button" class="sample-pill" data-cat="Air Conditioner">"I want an AC under 35k with fast cooling and low power bill"</button>
+                    <button type="button" class="sample-pill" data-cat="Washing Machine">"Front load washing machine in 30k with great wash quality and silent motor"</button>
                     <button type="button" class="sample-pill" data-cat="Smartphone">"I need a phone under 30k with excellent camera, battery and gaming."</button>
-                    <button type="button" class="sample-pill" data-cat="Laptop">"Gaming laptop with fast GPU and top notch cooling under 1 lakh"</button>
-                    <button type="button" class="sample-pill" data-cat="Headphones">"Best wireless headphones for bass and active noise cancellation"</button>
+                    <button type="button" class="sample-pill" data-cat="Footwear">"Running shoes under 5k with responsive cushioning and durability"</button>
+                    <button type="button" class="sample-pill" data-cat="Television">"55 inch 4K TV under 60k with vibrant picture and Dolby Atmos"</button>
                 </div>
                 <button type="button" id="btn-submit-query" onclick="submitChoiceAIQuery(event)" class="btn btn-primary" style="padding: 0.85rem 1.75rem;">
                     ✨ Find My Match with ChoiceAI
@@ -69,8 +79,9 @@
         <section id="results-section" style="display: none; margin-top: 3rem;">
             <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
                 <div>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
                         <span id="results-category-tag" class="chip-btn active" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; cursor: default;"></span>
+                        <span id="results-brand-tag" class="chip-btn" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; cursor: default; display: none; background: rgba(147, 51, 234, 0.15); border-color: rgba(147, 51, 234, 0.4); color: #d8b4fe;"></span>
                         <span id="results-budget-tag" class="chip-btn" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; cursor: default;"></span>
                     </div>
                     <h2 style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800;">
@@ -93,6 +104,9 @@
                 <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase;">Extracted Priorities:</span>
                 <div id="results-weights-tags" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
             </div>
+
+            <!-- Budget Alert Notice (shown only when budget is relaxed) -->
+            <div id="budget-relaxed-notice" style="display: none; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: var(--radius-md); padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; color: #fbbf24; font-size: 0.92rem;"></div>
 
             <!-- Product Cards Grid -->
             <div id="results-product-grid" class="product-grid">

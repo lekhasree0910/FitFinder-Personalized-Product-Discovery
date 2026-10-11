@@ -59,18 +59,51 @@ function initCategoryChips() {
 
 function getSelectedCategory() {
     const activeChip = document.querySelector('.chip-btn.active');
-    return activeChip ? activeChip.getAttribute('data-category') : 'Smartphone';
+    const cat = activeChip ? activeChip.getAttribute('data-category') : null;
+    return (!cat || cat === 'All') ? null : cat;
 }
 
 function selectCategory(categoryName) {
+    if (!categoryName) return;
     const chips = document.querySelectorAll('.chip-btn');
     chips.forEach(chip => {
-        if (chip.getAttribute('data-category') && chip.getAttribute('data-category').toLowerCase() === categoryName.toLowerCase()) {
+        const cat = chip.getAttribute('data-category');
+        if (cat && cat.toLowerCase() === categoryName.toLowerCase()) {
             chip.classList.add('active');
-        } else if (chip.getAttribute('data-category')) {
+        } else if (cat) {
             chip.classList.remove('active');
         }
     });
+}
+
+function getCategoryFallbackImage(category) {
+    const cat = (category || '').toLowerCase();
+    if (cat.includes('conditioner') || cat === 'ac') {
+        return 'images/ac_voltas.jpg';
+    } else if (cat.includes('wash')) {
+        return 'https://images.unsplash.com/photo-1626806787426-5910811b6325?w=500';
+    } else if (cat.includes('refrigerat') || cat.includes('fridge')) {
+        return 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=500';
+    } else if (cat.includes('tv') || cat.includes('television')) {
+        return 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=500';
+    } else if (cat.includes('shoe') || cat.includes('footwear')) {
+        return 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500';
+    } else if (cat.includes('kitchen') || cat.includes('fryer') || cat.includes('mixer')) {
+        return 'https://images.unsplash.com/photo-1585659722983-3a675dabf23d?w=500';
+    } else if (cat.includes('headphone') || cat.includes('audio') || cat.includes('earbud')) {
+        return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500';
+    } else if (cat.includes('laptop') || cat.includes('pc') || cat.includes('computer')) {
+        return 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500';
+    } else if (cat.includes('watch')) {
+        return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
+    } else if (cat.includes('camera')) {
+        return 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500';
+    } else if (cat.includes('furnitur') || cat.includes('chair')) {
+        return 'images/chair_greensoul.jpg';
+    } else if (cat.includes('groom') || cat.includes('trimmer') || cat.includes('care')) {
+        return 'https://images.unsplash.com/photo-1621607512214-68297480165e?w=500';
+    }
+    return 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500';
 }
 
 // Sample Query Pills & Input listeners
@@ -140,6 +173,11 @@ async function submitChoiceAIQuery(e) {
 
         currentQueryData = data.query;
 
+        // Auto-synchronize UI category chips with detected product category
+        if (data.query && data.query.category) {
+            selectCategory(data.query.category);
+        }
+
         // Store in BOTH sessionStorage and localStorage for rock-solid stability
         sessionStorage.setItem('current_query', JSON.stringify(data.query));
         sessionStorage.setItem('current_aspect_set', JSON.stringify(data.aspect_set));
@@ -178,6 +216,16 @@ async function renderInlineResults(queryData) {
     const catTag = document.getElementById('results-category-tag');
     if (catTag) catTag.innerText = queryData.category || 'Product';
 
+    const brandTag = document.getElementById('results-brand-tag');
+    if (brandTag) {
+        if (queryData.brand) {
+            brandTag.style.display = 'inline-block';
+            brandTag.innerText = `🏷️ ${queryData.brand}`;
+        } else {
+            brandTag.style.display = 'none';
+        }
+    }
+
     const budgetTag = document.getElementById('results-budget-tag');
     if (budgetTag) {
         budgetTag.innerText = queryData.budget ? `Budget: ₹${Number(queryData.budget).toLocaleString('en-IN')}` : 'Flexible Budget';
@@ -208,6 +256,7 @@ async function renderInlineResults(queryData) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 category: queryData.category,
+                brand: queryData.brand,
                 budget: queryData.budget,
                 preference_weights: queryData.preference_weights_json
             })
@@ -215,13 +264,24 @@ async function renderInlineResults(queryData) {
         const data = await res.json();
         const prods = data.shortlisted_products || [];
         currentShortlist = prods;
-        renderInlineCards(prods);
+
+        const noticeEl = document.getElementById('budget-relaxed-notice');
+        if (noticeEl) {
+            if (data.is_budget_relaxed) {
+                noticeEl.style.display = 'block';
+                noticeEl.innerHTML = `⚠️ <strong>Budget Notice:</strong> No options found in our catalog strictly within ₹${Number(queryData.budget).toLocaleString('en-IN')}. Showing closest available products starting from <strong>₹${Number(data.min_available_price).toLocaleString('en-IN')}</strong>:`;
+            } else {
+                noticeEl.style.display = 'none';
+            }
+        }
+
+        renderInlineCards(prods, queryData);
     } catch (err) {
         if (grid) grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #f43f5e;">Error loading products: ${err.message}</div>`;
     }
 }
 
-function renderInlineCards(products) {
+function renderInlineCards(products, queryData) {
     const grid = document.getElementById('results-product-grid');
     if (!grid) return;
 
@@ -247,15 +307,22 @@ function renderInlineCards(products) {
             .map(([k, v]) => `<span class="aspect-tag">${k}: ${Math.round(v * 100)}%</span>`)
             .join('');
 
+        const fallbackImg = getCategoryFallbackImage(p.category);
+        const budgetBadge = (queryData && queryData.budget) ? (
+            p.is_over_budget
+                ? `<span style="font-size: 0.72rem; font-weight: 600; color: #f87171; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.15rem 0.45rem; border-radius: 4px; margin-left: 0.4rem;">+₹${Number(p.budget_diff).toLocaleString('en-IN')} over budget</span>`
+                : `<span style="font-size: 0.72rem; font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); padding: 0.15rem 0.45rem; border-radius: 4px; margin-left: 0.4rem;">✓ Within Budget</span>`
+        ) : '';
+
         card.innerHTML = `
             <div class="product-img-wrapper">
-                <img src="${p.image_url || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500'}" class="product-img" alt="${escapeHtml(p.name)}" onerror="this.src='https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500'">
+                <img src="${p.image_url || fallbackImg}" class="product-img" alt="${escapeHtml(p.name)}" onerror="this.onerror=null; this.src='${fallbackImg}';">
                 <div class="match-badge">${p.match_percentage || Math.round((p.final_score || 0.75) * 100)}% Match</div>
             </div>
             <div class="product-body">
                 <div class="product-brand">${escapeHtml(p.brand)}</div>
                 <div class="product-name">${escapeHtml(p.name)}</div>
-                <div class="product-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
+                <div class="product-price">₹${Number(p.price).toLocaleString('en-IN')} ${budgetBadge}</div>
                 <div class="aspect-tags">${aspectTags}</div>
                 <button type="button" class="btn btn-secondary select-btn" style="margin-top: 0.5rem; font-size: 0.85rem; width: 100%;">
                     ${isSelected ? '✓ Selected for CompareWise' : '+ Select to Compare'}
@@ -474,6 +541,7 @@ async function loadShortlistPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 category: queryData.category,
+                brand: queryData.brand,
                 budget: queryData.budget,
                 preference_weights: queryData.preference_weights_json
             })
@@ -481,13 +549,13 @@ async function loadShortlistPage() {
 
         const data = await res.json();
         currentShortlist = data.shortlisted_products || [];
-        renderShortlistCards(currentShortlist);
+        renderShortlistCards(currentShortlist, queryData);
     } catch (err) {
         container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #f43f5e;">Error loading products: ${err.message}</div>`;
     }
 }
 
-function renderShortlistCards(products) {
+function renderShortlistCards(products, queryData) {
     const container = document.getElementById('products-grid-container');
     if (!products || products.length === 0) {
         container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;">No matching products found.</div>';
@@ -512,15 +580,22 @@ function renderShortlistCards(products) {
             .map(([k, v]) => `<span class="aspect-tag">${k}: ${Math.round(v * 100)}%</span>`)
             .join('');
 
+        const fallbackImg = getCategoryFallbackImage(p.category);
+        const budgetBadge = (queryData && queryData.budget) ? (
+            p.is_over_budget
+                ? `<span style="font-size: 0.72rem; font-weight: 600; color: #f87171; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.15rem 0.45rem; border-radius: 4px; margin-left: 0.4rem;">+₹${Number(p.budget_diff).toLocaleString('en-IN')} over budget</span>`
+                : `<span style="font-size: 0.72rem; font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); padding: 0.15rem 0.45rem; border-radius: 4px; margin-left: 0.4rem;">✓ Within Budget</span>`
+        ) : '';
+
         card.innerHTML = `
             <div class="product-img-wrapper">
-                <img src="${p.image_url || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500'}" class="product-img" alt="${escapeHtml(p.name)}" onerror="this.src='https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500'">
+                <img src="${p.image_url || fallbackImg}" class="product-img" alt="${escapeHtml(p.name)}" onerror="this.onerror=null; this.src='${fallbackImg}';">
                 <div class="match-badge">${p.match_percentage || Math.round(p.final_score * 100)}% Match</div>
             </div>
             <div class="product-body">
                 <div class="product-brand">${escapeHtml(p.brand)}</div>
                 <div class="product-name">${escapeHtml(p.name)}</div>
-                <div class="product-price">₹${Number(p.price).toLocaleString('en-IN')}</div>
+                <div class="product-price">₹${Number(p.price).toLocaleString('en-IN')} ${budgetBadge}</div>
                 <div class="aspect-tags">${aspectTags}</div>
                 <button class="btn btn-secondary select-btn" style="margin-top: 0.5rem; font-size: 0.85rem; width: 100%;">
                     ${isSelected ? '✓ Selected for CompareWise' : '+ Select to Compare'}

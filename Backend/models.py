@@ -34,6 +34,7 @@ class Query(Base):
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=True)
     raw_query_text = Column(Text, nullable=False)
     category = Column(String(50), nullable=False)
+    brand = Column(String(100), nullable=True)
     budget = Column(Float, nullable=True)
     preference_weights_json = Column(Text, nullable=False, default="{}")
     submitted_at = Column(DateTime, default=datetime.datetime.utcnow)
@@ -56,6 +57,7 @@ class Query(Base):
             "user_id": self.user_id,
             "raw_query_text": self.raw_query_text,
             "category": self.category,
+            "brand": self.brand,
             "budget": self.budget,
             "preference_weights_json": self.get_preference_weights(),
             "submitted_at": self.submitted_at.isoformat() if self.submitted_at else None

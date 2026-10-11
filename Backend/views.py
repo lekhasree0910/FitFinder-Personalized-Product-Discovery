@@ -124,6 +124,7 @@ def submit_choiceai_query():
 
     parsed = parse_query(raw_query, explicit_category)
     category = parsed["category"]
+    brand = parsed.get("brand")
     budget = parsed["budget"]
     preference_weights = parsed["preference_weights"]
 
@@ -133,6 +134,7 @@ def submit_choiceai_query():
             user_id=user_id,
             raw_query_text=raw_query,
             category=category,
+            brand=brand,
             budget=budget,
             preference_weights_json=json.dumps(preference_weights)
         )
@@ -232,6 +234,7 @@ def shortlist_products():
     """
     data = request.get_json() or {}
     category = data.get('category', 'Smartphone')
+    brand = data.get('brand')
     budget = data.get('budget')
     if budget is not None:
         try:
@@ -247,23 +250,37 @@ def shortlist_products():
     db = get_db_session()
     try:
         # Category filter
-        query = db.query(Product).filter(Product.category.ilike(category))
+        base_query = db.query(Product).filter(Product.category.ilike(category))
+
+        # Brand filter if explicitly requested by user
+        if brand:
+            brand_query = base_query.filter(Product.brand.ilike(f"%{brand}%"))
+            if brand_query.count() > 0:
+                base_query = brand_query
 
         # Budget filter (allowing a flexible 10% buffer if under strict budget or filter strict)
+        query = base_query
         if budget and budget > 0:
-            query = query.filter(Product.price <= budget * 1.15)
+            query = base_query.filter(Product.price <= budget * 1.15)
 
         candidates = query.all()
+        is_budget_relaxed = False
 
-        # If strict budget filtered everything out, relax to category
+        # If strict budget filtered everything out, relax to base_query but flag it
         if not candidates:
-            candidates = db.query(Product).filter(Product.category.ilike(category)).all()
+            candidates = base_query.all()
+            if candidates and budget and budget > 0:
+                is_budget_relaxed = True
 
         scoring_result = calculate_personalized_scores(candidates, preference_weights, category, budget)
+        min_available = min([c.price for c in candidates], default=None) if is_budget_relaxed else None
 
         return jsonify({
             "category": category,
+            "brand": brand,
             "budget": budget,
+            "is_budget_relaxed": is_budget_relaxed,
+            "min_available_price": min_available,
             "total_candidates": len(candidates),
             "shortlisted_products": scoring_result["ranked_products"],
             "top_recommendation_id": scoring_result["top_recommendation_id"]
