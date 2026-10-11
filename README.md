@@ -6,7 +6,6 @@
   <img src="https://img.shields.io/badge/NLP-NLTK%20VADER%20%7C%20ABSA-orange.svg" alt="NLP" />
   <img src="https://img.shields.io/badge/Database-SQLAlchemy%20%2B%20SQLite-lightgrey.svg" alt="Database" />
   <img src="https://img.shields.io/badge/Frontend-Vanilla%20JS%20%26%20CSS%20Glassmorphism-purple.svg" alt="Frontend" />
-  <img src="https://img.shields.io/badge/Tests-Passing%20(E2E%20%26%20Live%20Server)-brightgreen.svg" alt="Tests" />
   <img src="https://img.shields.io/badge/Architecture-ChoiceAI%20%2B%20CompareWise-blueviolet.svg" alt="Architecture" />
 </p>
 
