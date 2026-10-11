@@ -465,18 +465,4 @@ FitFinder/
 └── README.md                      # Comprehensive project documentation
 ```
 
----
 
-## 🔮 Future Enhancements & Roadmap
-
-- [ ] **Transformer-based ABSA**: Fine-tune a domain-specific BERT / RoBERTa model (`deberta-v3-base`) for deeper contextual clause parsing.
-- [ ] **Multimodal Embeddings**: Incorporate product image visual aesthetics into the scoring engine via CLIP.
-- [ ] **Dynamic Live Scraping**: Integrate automated connectors to fetch real-time reviews and pricing from Amazon and Flipkart APIs.
-- [ ] **Conversational Refinement**: Allow multi-turn interactive dialogue where users can say *"Find something similar but with better battery"* to adjust previous runs.
-
----
-
-## 📄 License & Attribution
-
-Developed as an Academic NLP Full-Stack Project. Released under the **MIT License**.  
-*For questions, inquiries, or contributions, feel free to submit an issue or pull request.*
